@@ -1,0 +1,55 @@
+## Section A: Restore the database
+(Done via pgAdmin / BrightSpace guide — drop DB, re-create DB, restore from orm_restore.sql)
+
+## Section B: Integrate Prisma ORM
+
+### Step 1: Install Prisma as a dev dependency
+npm install prisma@6 --save-dev
+
+### Step 2: Initialize Prisma (creates prisma/schema.prisma + .env)
+npx prisma init
+
+### Step 3: Set DATABASE_URL in .env
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5433/DATABASE_NAME"
+
+### Step 4: Confirm datasource block in schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+### Step 5: Set default schema location in package.json
+"prisma": {
+  "schema": "./prisma/schema.prisma"
+}
+
+### Step 6: Introspect the existing database (reads DB → generates models)
+npx prisma db pull
+
+### Step 7: Install case-format tool (fixes snake_case → camelCase)
+npm i prisma-case-format
+
+### Step 8: Run case-format on schema.prisma
+npx prisma-case-format --file "./prisma/schema.prisma" --map-table-case "snake" --table-case "camel"
+
+### Step 9: Create migrations folder for baseline
+mkdir -p prisma\migrations\0_init
+
+### Step 10: Generate baseline migration SQL (diff between empty and current schema)
+npx prisma migrate diff --from-empty --to-schema-datamodel prisma\schema.prisma --script > prisma\migrations\0_init\migration.sql
+
+### Step 11: Fix file encoding (VS Code)
+- Open migration.sql
+- Ctrl+Shift+P → "Change File Encoding" → "Save with encoding" → UTF-8
+
+### Step 12: Mark the migration as already applied (baseline)
+npx prisma migrate resolve --applied 0_init
+
+### Step 13: Install Prisma Client
+npm install @prisma/client@6
+
+### Step 14: Generate the Prisma Client
+npx prisma generate
+
+### Step 15: Install Prisma VS Code extension
+(Extensions Marketplace → search "prisma" → Install — for syntax highlighting)

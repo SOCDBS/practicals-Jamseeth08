@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../generated/prisma"
 }
 
@@ -29,7 +29,7 @@ model course {
   crseFee   Decimal  @map("crse_fee") @db.Decimal(7, 2)
   labFee    Decimal? @map("lab_fee") @db.Decimal(7, 2)
 
-   department department @relation(fields: [offeredBy], references: [deptCode], onDelete: NoAction, onUpdate: NoAction, map: "fk_course_offered_by")
+  department department @relation(fields: [offeredBy], references: [deptCode], onDelete: NoAction, onUpdate: NoAction, map: "fk_course_offered_by")
 
   student student[]
 }
@@ -44,10 +44,10 @@ model department {
   expenditure      Decimal?  @db.Decimal(9, 2)
   hodApptDate      DateTime? @map("hod_appt_date") @db.Date
 
-   departmentHodToStaff      staff   @relation("departmentHodToStaff", fields: [hod], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "dept_hod_fk")
+  departmentHodToStaff      staff   @relation("departmentHodToStaff", fields: [hod], references: [staffNo], onDelete: NoAction, onUpdate: NoAction, map: "dept_hod_fk")
   staffDeptCodeToDepartment staff[] @relation("staffDeptCodeToDepartment")
 
-   course course[]
+  course course[]
 }
 
 model staff {
@@ -69,7 +69,7 @@ model staff {
   designation       String   @db.VarChar(20)
 
   departmentHodToStaff      department[] @relation("departmentHodToStaff")
-   staffDeptCodeToDepartment department    @relation("staffDeptCodeToDepartment", fields: [deptCode], references: [deptCode], onDelete: NoAction, onUpdate: NoAction, map: "staff_dept_code_fk")
+  staffDeptCodeToDepartment department    @relation("staffDeptCodeToDepartment", fields: [deptCode], references: [deptCode], onDelete: NoAction, onUpdate: NoAction, map: "staff_dept_code_fk")
 
   staffDependent staffDependent[]
   module         module[]
