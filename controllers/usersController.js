@@ -16,15 +16,15 @@ module.exports.login = function (req, res, next) {
 
     let userData;
 
-    userModel.retrieveByUserAccount(accountNo)
-        .then(function (userAccount) {
-            if (!userAccount) {
-                return res.status(401).json({ message: 'Invalid Account Number or password' });
-            }
-            userData = userAccount;
-            return bcrypt.compare(password, userAccount.password);
-        })
-        .then(function (isMatch) {
+     userModel.retrieveByUserAccount(accountNo)
+.then(function (userAccount) {
+    if (!userAccount) {
+        throw { status: 401, message: 'Invalid Account Number or password' };
+    }
+    userData = userAccount;
+    return bcrypt.compare(password, userAccount.password);
+})
+ .then(function (isMatch) {
             if (!isMatch) {
                 // Throw an error instead of returning a response
                 throw { status: 401, message: 'Wrong password' };
